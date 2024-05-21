@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "C62DFCDE-7CE4-4211-9EA9-D3358DBA3AA8"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BC8A42E4-9AD5-4B53-9D98-4A0D50DE3E3F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "GiPiTe/ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
+            landmarkName = "endConversation()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BC8A42E4-9AD5-4B53-9D98-4A0D50DE3E3F - dcb0b05c045fbf26"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "GiPiTe.ViewController.endConversation() -&gt; ()"
+                  moduleName = "GiPiTe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/latelatte/GiPiTe/GiPiTe/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "218"
+                  endingLineNumber = "218">
+               </Location>
+               <Location
+                  uuid = "BC8A42E4-9AD5-4B53-9D98-4A0D50DE3E3F - dcb0b05c045fbe8b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "GiPiTe.ViewController.endConversation() -&gt; ()"
+                  moduleName = "GiPiTe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/latelatte/GiPiTe/GiPiTe/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "221"
+                  endingLineNumber = "221">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
