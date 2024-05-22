@@ -31,6 +31,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         configureUI()
         loadSettings()
         setupNavigationBar()
+        self.view.backgroundColor = UIColor(red:0.53, green:0.56, blue:0.79, alpha:1.0) 
         speechRecognizer?.delegate = self
         synthesizer.onAudioPlaybackFinished = { [weak self] in
             self?.startSpeechRecognition()
@@ -39,14 +40,19 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
     
     private func setupNavigationBar() {
-        let settingsButton = UIBarButtonItem(title: "設定", style: .plain, target: self, action: #selector(openSettings))
-        self.navigationItem.rightBarButtonItem = settingsButton
-    }
+            // アイコン画像を指定してUIBarButtonItemを作成
+            if let settingsImage = UIImage(named: "settings_icon")?.withRenderingMode(.alwaysOriginal) {
+                let settingsButton = UIBarButtonItem(image: settingsImage, style: .plain, target: self, action: #selector(openSettings))
+                
+                // ナビゲーションバーにボタンを設定
+                self.navigationItem.rightBarButtonItem = settingsButton
+            }
+        }
     
     @objc private func openSettings() {
-        let settingsVC = SettingsViewController()
-        navigationController?.pushViewController(settingsVC, animated: true)
-    }
+            let settingsVC = SettingsViewController()
+            navigationController?.pushViewController(settingsVC, animated: true)
+        }
     
     private func loadSettings() {
         let defaults = UserDefaults.standard
