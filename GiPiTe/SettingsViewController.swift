@@ -9,15 +9,19 @@ class SettingsViewController: UIViewController {
         let textField = UITextField()
         textField.placeholder = "APIキーを入力"
         textField.borderStyle = .roundedRect
+        textField.isSecureTextEntry = true  // APIキーをセキュアな入力フィールドに設定
         return textField
     }()
 
     let apiKeyURLLabel: UILabel = {
         let label = UILabel()
-        label.text = "APIキーはここ: HTTP://URL"
+        label.text = "APIキーはこちらから取得できます: https://openai.com/index/openai-api/"
         label.textColor = .gray
+        label.font = UIFont.systemFont(ofSize: 14)  // フォントサイズを14に設定
+        label.isUserInteractionEnabled = true  // ユーザーインタラクションを有効にする
         return label
     }()
+
 
     let pasteButton: UIButton = {
         let button = UIButton(type: .system)
@@ -61,6 +65,7 @@ class SettingsViewController: UIViewController {
     let gptSettingsLabel: UILabel = {
         let label = UILabel()
         label.text = "GPTの設定を入力"
+        label.font = UIFont.boldSystemFont(ofSize: 16)  // フォントサイズを16に設定
         return label
     }()
     
@@ -71,13 +76,23 @@ class SettingsViewController: UIViewController {
         textView.layer.cornerRadius = 5
         return textView
     }()
+    
+    let gptDescriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "GPT-3.5-turboは高速、GPT-4oはより高性能です\nGPT-4oの方がコストがかかりますのでご注意ください"
+        label.font = UIFont.systemFont(ofSize: 14)  // フォントサイズを14に設定
+        label.lineBreakMode = .byWordWrapping
+        label.textColor = .gray
+        label.numberOfLines = 0
+        return label
+    }()
 
     let buttonContainer: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
-        stackView.spacing = 1
+        stackView.spacing = 10
         return stackView
     }()
 
@@ -87,22 +102,33 @@ class SettingsViewController: UIViewController {
         view.backgroundColor = .white
         title = "設定"
 
+        // すべてのビューを共通の親ビューに追加
         view.addSubview(apiKeyTextField)
         view.addSubview(apiKeyURLLabel)
         view.addSubview(pasteButton)
         view.addSubview(saveButton)
         view.addSubview(gptSettingsLabel)
         view.addSubview(gptSettingsTextView)
+        view.addSubview(gptDescriptionLabel)
         buttonContainer.addArrangedSubview(gpt4Button)
         buttonContainer.addArrangedSubview(gpt35Button)
         view.addSubview(buttonContainer)
 
+        setupConstraints()
+        loadSettings()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(openURL))
+        apiKeyURLLabel.addGestureRecognizer(tapGesture)
+    }
+
+    private func setupConstraints() {
         apiKeyTextField.translatesAutoresizingMaskIntoConstraints = false
         apiKeyURLLabel.translatesAutoresizingMaskIntoConstraints = false
         pasteButton.translatesAutoresizingMaskIntoConstraints = false
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         gptSettingsLabel.translatesAutoresizingMaskIntoConstraints = false
         gptSettingsTextView.translatesAutoresizingMaskIntoConstraints = false
+        gptDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         buttonContainer.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
@@ -122,7 +148,11 @@ class SettingsViewController: UIViewController {
             buttonContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             buttonContainer.heightAnchor.constraint(equalToConstant: 50),
 
-            gptSettingsLabel.topAnchor.constraint(equalTo: buttonContainer.bottomAnchor, constant: 20),
+            gptDescriptionLabel.topAnchor.constraint(equalTo: buttonContainer.bottomAnchor, constant: 10),
+            gptDescriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            gptDescriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            gptSettingsLabel.topAnchor.constraint(equalTo: gptDescriptionLabel.bottomAnchor, constant: 20),
             gptSettingsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
 
             gptSettingsTextView.topAnchor.constraint(equalTo: gptSettingsLabel.bottomAnchor, constant: 5),
@@ -135,8 +165,6 @@ class SettingsViewController: UIViewController {
             saveButton.widthAnchor.constraint(equalToConstant: 100),
             saveButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-
-        loadSettings()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -159,6 +187,13 @@ class SettingsViewController: UIViewController {
             apiKeyTextField.text = pasteboardString
         }
     }
+    
+    // URLを開く処理
+    @objc func openURL() {
+        if let url = URL(string: "https://openai.com/index/openai-api/") {
+            UIApplication.shared.open(url)
+        }
+    }
 
     @objc func saveSettings() {
         let defaults = UserDefaults.standard
@@ -167,8 +202,11 @@ class SettingsViewController: UIViewController {
         defaults.set(gptSettingsTextView.text, forKey: "systemMessage")
         
         // 保存成功のアラートを表示
-        let alertController = UIAlertController(title: "設定保存", message: "設定が保存されました", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        let alertController = UIAlertController(title: "保存完了", message: "設定が保存されました", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+            // メイン画面に戻る処理
+            self.navigationController?.popViewController(animated: true)
+        }
         alertController.addAction(okAction)
         present(alertController, animated: true, completion: nil)
     }
@@ -177,7 +215,6 @@ class SettingsViewController: UIViewController {
         let defaults = UserDefaults.standard
         apiKeyTextField.text = defaults.string(forKey: "apiKey")
         gptSettingsTextView.text = defaults.string(forKey: "systemMessage")
-
         if let model = defaults.string(forKey: "model"), let index = models.firstIndex(of: model) {
             selectedModel = model
             let button = buttonContainer.arrangedSubviews[index] as? UIButton
