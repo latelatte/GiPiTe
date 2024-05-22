@@ -19,8 +19,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     private let synthesizer = StyleBertVITS2Synthesizer()
     
     // 初期設定の変数
+    private var apiKey: String = ""
+    private var gptModel: String = ""
     private var systemMessage: [String: String] = [:]
-    
+
     // APIのURLを定数として宣言
     private let gptApiUrl = "https://api.openai.com/v1/chat/completions"
 
@@ -48,9 +50,18 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     private func loadSettings() {
         let defaults = UserDefaults.standard
+        if let apiKey = defaults.string(forKey: "apiKey") {
+            self.apiKey = apiKey
+        }
+        if let model = defaults.string(forKey: "model") {
+            self.gptModel = model
+        }
         if let systemMessageContent = defaults.string(forKey: "systemMessage") {
             self.systemMessage = ["role": "system", "content": systemMessageContent]
         }
+    }
+
+    private func initializeConversationHistory() {
         conversationHistory = [systemMessage]
     }
     
@@ -95,6 +106,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     @IBAction func startRecognition(_ sender: UIButton) {
         isConversationActive = true
+        loadSettings()  // セッション開始前に設定を読み込み
+        initializeConversationHistory()  // 会話履歴の初期化
         startButton.isEnabled = false
         stopButton.isEnabled = true
         startSpeechRecognition()
@@ -204,7 +217,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         isConversationActive = false
         stopSpeechRecognition()
         statusLabel.text = "会話を終了しました。"
-        conversationHistory = [systemMessage]
         startButton.isEnabled = true
         stopButton.isEnabled = false
     }
@@ -236,16 +248,15 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         var request = URLRequest(url: serverURL)
         request.httpMethod = "POST"
         
-        // APIキーとモデルを取得
-        let apiKey = UserDefaults.standard.string(forKey: "apiKey") ?? ""
-        let gptModel = UserDefaults.standard.string(forKey: "model") ?? "gpt-3.5-turbo"
-        
         // ユーザーメッセージを追加
         conversationHistory.append(["role": "user", "content": text])
 
+        // ユーザーメッセージとアシスタントメッセージのみを抽出
+        let userAndAssistantMessages = conversationHistory.filter { $0["role"] == "user" || $0["role"] == "assistant" }
+
         let json: [String: Any] = [
             "model": gptModel,
-            "messages": conversationHistory
+            "messages": userAndAssistantMessages
         ]
         
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -329,7 +340,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         
         task.resume()
     }
-    
+
     private func synthesizeSpeechWithStyleBertVITS2(from text: String) {
         stopSpeechRecognition()  // 音声認識を一時停止
         synthesizer.synthesizeSpeech(from: text) { error in

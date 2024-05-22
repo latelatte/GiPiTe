@@ -2,7 +2,7 @@ import UIKit
 
 class SettingsViewController: UIViewController {
     
-    let models = ["gpt-3.5-turbo", "gpt-4"]
+    let models = ["gpt-3.5-turbo", "gpt-4o"]
     var selectedModel: String? = "gpt-3.5-turbo"
 
     let apiKeyTextField: UITextField = {
@@ -38,7 +38,7 @@ class SettingsViewController: UIViewController {
 
     let gpt4Button: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("GPT-4", for: .normal)
+        button.setTitle("GPT-4o", for: .normal)
         button.tag = 1
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
@@ -49,7 +49,7 @@ class SettingsViewController: UIViewController {
     
     let gpt35Button: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("GPT-3.5", for: .normal)
+        button.setTitle("GPT-3.5-turbo", for: .normal)
         button.tag = 0
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
@@ -165,8 +165,12 @@ class SettingsViewController: UIViewController {
         defaults.set(apiKeyTextField.text, forKey: "apiKey")
         defaults.set(selectedModel, forKey: "model")
         defaults.set(gptSettingsTextView.text, forKey: "systemMessage")
-
-        navigationController?.popViewController(animated: true)
+        
+        // 保存成功のアラートを表示
+        let alertController = UIAlertController(title: "設定保存", message: "設定が保存されました", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
     }
 
     func loadSettings() {
