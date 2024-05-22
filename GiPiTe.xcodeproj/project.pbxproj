@@ -17,7 +17,8 @@
 		AD000F5B2BF8320C000DD226 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD000F572BF8320C000DD226 /* Assets.xcassets */; };
 		AD000F5C2BF8320C000DD226 /* playstore.png in Resources */ = {isa = PBXBuildFile; fileRef = AD000F582BF8320C000DD226 /* playstore.png */; };
 		AD000F5E2BF83DF1000DD226 /* LaunchScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = AD000F5D2BF83DF1000DD226 /* LaunchScreen.png */; };
-		AD000F602BF844C2000DD226 /* test1.png in Resources */ = {isa = PBXBuildFile; fileRef = AD000F5F2BF844C2000DD226 /* test1.png */; };
+		AD40B05A2BFDAEBA003DE317 /* settings_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AD40B0592BFDAEBA003DE317 /* settings_icon.png */; };
+		AD40B05C2BFDB0F5003DE317 /* screen.png in Resources */ = {isa = PBXBuildFile; fileRef = AD40B05B2BFDB0F5003DE317 /* screen.png */; };
 		AD85E46F2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD85E46E2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf */; };
 		AD85E4712BFD122A00DE6801 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD85E4702BFD122A00DE6801 /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
@@ -35,7 +36,8 @@
 		AD000F572BF8320C000DD226 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AD000F582BF8320C000DD226 /* playstore.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playstore.png; sourceTree = "<group>"; };
 		AD000F5D2BF83DF1000DD226 /* LaunchScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchScreen.png; sourceTree = "<group>"; };
-		AD000F5F2BF844C2000DD226 /* test1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test1.png; sourceTree = "<group>"; };
+		AD40B0592BFDAEBA003DE317 /* settings_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_icon.png; sourceTree = "<group>"; };
+		AD40B05B2BFDB0F5003DE317 /* screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screen.png; sourceTree = "<group>"; };
 		AD85E46E2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MPLUSRounded1c-Bold.ttf"; sourceTree = "<group>"; };
 		AD85E4702BFD122A00DE6801 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -87,9 +89,10 @@
 		AD000F4B2BF82C5A000DD226 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				AD40B05B2BFDB0F5003DE317 /* screen.png */,
+				AD40B0592BFDAEBA003DE317 /* settings_icon.png */,
 				AD85E46E2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf */,
 				AD000F5D2BF83DF1000DD226 /* LaunchScreen.png */,
-				AD000F5F2BF844C2000DD226 /* test1.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -163,12 +166,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD000F5A2BF8320C000DD226 /* appstore.png in Resources */,
+				AD40B05C2BFDB0F5003DE317 /* screen.png in Resources */,
 				AD000F402BF80A9F000DD226 /* Base in Resources */,
 				AD000F3B2BF80A9D000DD226 /* Base in Resources */,
 				AD000F5B2BF8320C000DD226 /* Assets.xcassets in Resources */,
+				AD40B05A2BFDAEBA003DE317 /* settings_icon.png in Resources */,
 				AD000F5C2BF8320C000DD226 /* playstore.png in Resources */,
 				AD000F5E2BF83DF1000DD226 /* LaunchScreen.png in Resources */,
-				AD000F602BF844C2000DD226 /* test1.png in Resources */,
 				AD85E46F2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
