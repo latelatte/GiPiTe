@@ -7,7 +7,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     @IBOutlet weak var stopButton: UIButton!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var textOutput: UITextView!
-
+    
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "ja-JP"))
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -22,10 +22,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     private var apiKey: String = ""
     private var gptModel: String = ""
     private var systemMessage: [String: String] = [:]
-
+    
     // APIのURLを定数として宣言
     private let gptApiUrl = "https://api.openai.com/v1/chat/completions"
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
@@ -37,17 +37,17 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
         requestSpeechAuthorization()
     }
-
+    
     private func setupNavigationBar() {
         let settingsButton = UIBarButtonItem(title: "設定", style: .plain, target: self, action: #selector(openSettings))
         self.navigationItem.rightBarButtonItem = settingsButton
     }
-
+    
     @objc private func openSettings() {
         let settingsVC = SettingsViewController()
         navigationController?.pushViewController(settingsVC, animated: true)
     }
-
+    
     private func loadSettings() {
         let defaults = UserDefaults.standard
         if let apiKey = defaults.string(forKey: "apiKey") {
@@ -60,9 +60,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             self.systemMessage = ["role": "system", "content": systemMessageContent]
         }
     }
-
+    
     private func initializeConversationHistory() {
-        conversationHistory = [systemMessage]
+        conversationHistory = [["role": "system", "content": systemMessage["content"] ?? ""]]
     }
     
     private func requestSpeechAuthorization() {
@@ -88,31 +88,33 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         startButtonConfig.baseForegroundColor = UIColor(red:0.98, green:0.63, blue:0.71, alpha:1.0)
         startButtonConfig.attributedTitle?.font = UIFont(name: "RoundedMplus1c-Bold", size: 26)
         startButton.configuration = startButtonConfig
-
+        
         var stopButtonConfig = UIButton.Configuration.plain()
         stopButtonConfig.title = "会話を終える！"
         stopButtonConfig.baseForegroundColor = UIColor(red:0.53, green:0.56, blue:0.79, alpha:1.0)
         stopButtonConfig.attributedTitle?.font = UIFont(name: "RoundedMplus1c-Bold", size: 26)
         stopButton.configuration = stopButtonConfig
-
+        
         statusLabel.font = UIFont(name: "RoundedMplus1c-Bold", size: 17)
         statusLabel.textColor = UIColor.darkGray
         statusLabel.numberOfLines = 0
         statusLabel.lineBreakMode = .byWordWrapping
-
+        
         textOutput.font = UIFont(name: "RoundedMplus1c-Bold", size: 17)
         textOutput.textColor = UIColor.darkGray
     }
     
     @IBAction func startRecognition(_ sender: UIButton) {
-        isConversationActive = true
-        loadSettings()  // セッション開始前に設定を読み込み
-        initializeConversationHistory()  // 会話履歴の初期化
+        if !isConversationActive {  // 会話がアクティブでない場合のみ初期化
+            isConversationActive = true
+            loadSettings()  // セッション開始前に設定を読み込み
+            initializeConversationHistory()  // 会話履歴の初期化
+        }
         startButton.isEnabled = false
         stopButton.isEnabled = true
         startSpeechRecognition()
     }
-
+    
     @IBAction func stopRecognition(_ sender: UIButton) {
         endConversation()
     }
@@ -124,7 +126,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 statusLabel.text = "認識リクエストを作成できませんでした。"
                 return
             }
-
+            
             let audioSession = AVAudioSession.sharedInstance()
             do {
                 try audioSession.setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
@@ -133,10 +135,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 statusLabel.text = "オーディオセッションの設定に失敗しました。エラー: \(error.localizedDescription)"
                 return
             }
-
+            
             let inputNode = audioEngine.inputNode
             recognitionRequest.shouldReportPartialResults = true
-
+            
             recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { result, error in
                 if let error = error {
                     DispatchQueue.main.async {
@@ -145,7 +147,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                     self.stopSpeechRecognition()
                     return
                 }
-
+                
                 guard let result = result else {
                     DispatchQueue.main.async {
                         self.statusLabel.text = "音声認識結果がありません。"
@@ -153,10 +155,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                     self.stopSpeechRecognition()
                     return
                 }
-
+                
                 self.recognizedText = result.bestTranscription.formattedString
                 self.statusLabel.text = "認識中: \(self.recognizedText)"
-
+                
                 if result.isFinal {
                     inputNode.removeTap(onBus: 0)
                     self.audioEngine.stop()
@@ -183,14 +185,14 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                     self.resetSilenceTimer()
                 }
             }
-
+            
             let recordingFormat = inputNode.outputFormat(forBus: 0)
             inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, when in
                 self.recognitionRequest?.append(buffer)
             }
-
+            
             audioEngine.prepare()
-
+            
             do {
                 try audioEngine.start()
                 statusLabel.text = "音声認識を開始しました…"
@@ -212,7 +214,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         recognitionTask = nil
         updateUIForStoppedRecognition()
     }
-
+    
     private func endConversation() {
         isConversationActive = false
         stopSpeechRecognition()
@@ -220,7 +222,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         startButton.isEnabled = true
         stopButton.isEnabled = false
     }
-
+    
     private func updateUIForStoppedRecognition() {
         startButton.isEnabled = true
         stopButton.isEnabled = true  // "会話を終える"ボタンを有効化
@@ -242,7 +244,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             self.recognitionRequest?.endAudio()
         }
     }
-
+    
     private func sendToGPT(_ text: String) {
         let serverURL = URL(string: gptApiUrl)!
         var request = URLRequest(url: serverURL)
@@ -251,12 +253,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         // ユーザーメッセージを追加
         conversationHistory.append(["role": "user", "content": text])
 
-        // ユーザーメッセージとアシスタントメッセージのみを抽出
-        let userAndAssistantMessages = conversationHistory.filter { $0["role"] == "user" || $0["role"] == "assistant" }
-
+        // APIリクエストのペイロードを構築
         let json: [String: Any] = [
             "model": gptModel,
-            "messages": userAndAssistantMessages
+            "messages": conversationHistory
         ]
         
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -352,17 +352,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             // 音声再生が完了したら、音声認識を再開
         }
     }
-    
+
     private func scrollTextViewToBottom() {
         let range = NSMakeRange(textOutput.text.count - 1, 1)
         textOutput.scrollRangeToVisible(range)
     }
 }
 
-extension NSMutableData {
-    func appendString(_ string: String) {
-        if let data = string.data(using: .utf8) {
-            self.append(data)
-        }
-    }
-}
