@@ -106,7 +106,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         statusLabel.numberOfLines = 0
         statusLabel.lineBreakMode = .byWordWrapping
         
-        textOutput.font = UIFont(name: "RoundedMplus1c-Bold", size: 17)
+        textOutput.font = UIFont(name: "RoundedMplus1c", size: 15)
         textOutput.textColor = UIColor.darkGray
     }
     
@@ -322,7 +322,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                        let message = choices.first?["message"] as? [String: Any],
                        let content = message["content"] as? String {
                         DispatchQueue.main.async {
-                            self.textOutput.text += "\nGPT-4: \(content)\n"
+                            self.textOutput.text += "\nじぴて: \(content)\n"
                             self.scrollTextViewToBottom()
                             self.conversationHistory.append(["role": "assistant", "content": content])
                             self.synthesizeSpeechWithStyleBertVITS2(from: content)
