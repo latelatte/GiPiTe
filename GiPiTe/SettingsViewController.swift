@@ -72,12 +72,13 @@ class SettingsViewController: UIViewController {
         return textView
     }()
 
-    let buttonContainer: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 10
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.systemBlue.cgColor
-        return view
+    let buttonContainer: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 1
+        return stackView
     }()
 
     override func viewDidLoad() {
@@ -92,9 +93,9 @@ class SettingsViewController: UIViewController {
         view.addSubview(saveButton)
         view.addSubview(gptSettingsLabel)
         view.addSubview(gptSettingsTextView)
+        buttonContainer.addArrangedSubview(gpt4Button)
+        buttonContainer.addArrangedSubview(gpt35Button)
         view.addSubview(buttonContainer)
-        buttonContainer.addSubview(gpt4Button)
-        buttonContainer.addSubview(gpt35Button)
 
         apiKeyTextField.translatesAutoresizingMaskIntoConstraints = false
         apiKeyURLLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -103,8 +104,6 @@ class SettingsViewController: UIViewController {
         gptSettingsLabel.translatesAutoresizingMaskIntoConstraints = false
         gptSettingsTextView.translatesAutoresizingMaskIntoConstraints = false
         buttonContainer.translatesAutoresizingMaskIntoConstraints = false
-        gpt4Button.translatesAutoresizingMaskIntoConstraints = false
-        gpt35Button.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             apiKeyTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -122,16 +121,6 @@ class SettingsViewController: UIViewController {
             buttonContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             buttonContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             buttonContainer.heightAnchor.constraint(equalToConstant: 50),
-
-            gpt4Button.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
-            gpt4Button.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
-            gpt4Button.bottomAnchor.constraint(equalTo: buttonContainer.bottomAnchor),
-            gpt4Button.widthAnchor.constraint(equalTo: buttonContainer.widthAnchor, multiplier: 0.5),
-
-            gpt35Button.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
-            gpt35Button.trailingAnchor.constraint(equalTo: buttonContainer.trailingAnchor),
-            gpt35Button.bottomAnchor.constraint(equalTo: buttonContainer.bottomAnchor),
-            gpt35Button.widthAnchor.constraint(equalTo: buttonContainer.widthAnchor, multiplier: 0.5),
 
             gptSettingsLabel.topAnchor.constraint(equalTo: buttonContainer.bottomAnchor, constant: 20),
             gptSettingsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -156,8 +145,11 @@ class SettingsViewController: UIViewController {
     }
 
     @objc func modelButtonTapped(_ sender: UIButton) {
-        gpt4Button.backgroundColor = .clear
-        gpt35Button.backgroundColor = .clear
+        for subview in buttonContainer.arrangedSubviews {
+            if let button = subview as? UIButton {
+                button.backgroundColor = .clear
+            }
+        }
         sender.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
         selectedModel = models[sender.tag]
     }
@@ -172,7 +164,7 @@ class SettingsViewController: UIViewController {
         let defaults = UserDefaults.standard
         defaults.set(apiKeyTextField.text, forKey: "apiKey")
         defaults.set(selectedModel, forKey: "model")
-        defaults.set(gptSettingsTextView.text, forKey: "gptSettings")
+        defaults.set(gptSettingsTextView.text, forKey: "systemMessage")
 
         navigationController?.popViewController(animated: true)
     }
@@ -180,15 +172,16 @@ class SettingsViewController: UIViewController {
     func loadSettings() {
         let defaults = UserDefaults.standard
         apiKeyTextField.text = defaults.string(forKey: "apiKey")
-        gptSettingsTextView.text = defaults.string(forKey: "gptSettings")
+        gptSettingsTextView.text = defaults.string(forKey: "systemMessage")
 
         if let model = defaults.string(forKey: "model"), let index = models.firstIndex(of: model) {
             selectedModel = model
-            let button = index == 0 ? gpt35Button : gpt4Button
-            button.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
+            let button = buttonContainer.arrangedSubviews[index] as? UIButton
+            button?.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
         } else {
             selectedModel = models.first
-            gpt35Button.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
+            let button = buttonContainer.arrangedSubviews[0] as? UIButton
+            button?.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
         }
     }
 
