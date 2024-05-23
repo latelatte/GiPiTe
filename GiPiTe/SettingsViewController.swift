@@ -45,9 +45,10 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     let saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("保存", for: .normal)
-        button.backgroundColor = UIColor.systemBlue
+        button.backgroundColor = UIColor(red:0.53, green:0.56, blue:0.79, alpha:1.0)
+        button.titleLabel?.font = UIFont(name: "RoundedMplus1c", size: 18)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 5
+        button.layer.cornerRadius = 20
         button.addTarget(self, action: #selector(saveSettings), for: .touchUpInside)
         return button
     }()
@@ -55,9 +56,10 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     let clearButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("クリア", for: .normal)
-        button.backgroundColor = UIColor.systemRed
+        button.backgroundColor = UIColor(red:0.98, green:0.63, blue:0.71, alpha:1.0)
+        button.titleLabel?.font = UIFont(name: "RoundedMplus1c", size: 18)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 5
+        button.layer.cornerRadius = 20
         button.addTarget(self, action: #selector(clearSettings), for: .touchUpInside)
         return button
     }()
@@ -121,9 +123,10 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     let loadPresetButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("プリセットをロード/削除", for: .normal)
-        button.backgroundColor = UIColor.systemGreen
+        button.backgroundColor = UIColor(red: 0.639, green: 0.855, blue: 0.839, alpha: 1.0)
+        button.titleLabel?.font = UIFont(name: "RoundedMplus1c", size: 18)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 5
+        button.layer.cornerRadius = 20
         button.addTarget(self, action: #selector(showPresetSelection), for: .touchUpInside)
         return button
     }()
@@ -131,9 +134,10 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     let savePresetButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("プリセットを保存", for: .normal)
-        button.backgroundColor = UIColor.systemBlue
+        button.backgroundColor = UIColor(red:0.53, green:0.56, blue:0.79, alpha:1.0)
+        button.titleLabel?.font = UIFont(name: "RoundedMplus1c", size: 18)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 5
+        button.layer.cornerRadius = 20
         button.addTarget(self, action: #selector(savePreset), for: .touchUpInside)
         return button
     }()
@@ -146,6 +150,21 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         stackView.spacing = 10
         return stackView
     }()
+    
+    let gptNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "GPTの名前を入力"
+        label.font = UIFont.boldSystemFont(ofSize: 16)
+        return label
+    }()
+
+    let gptNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "GPTの名前を入力"
+        textField.borderStyle = .roundedRect
+        return textField
+    }()
+
 
     override func viewDidLoad() {
             super.viewDidLoad()
@@ -156,6 +175,8 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             view.addSubview(pasteButton)
             view.addSubview(saveButton)
             view.addSubview(clearButton)
+            view.addSubview(gptNameLabel)
+            view.addSubview(gptNameTextField)
             view.addSubview(gptSettingsLabel)
             view.addSubview(gptSettingsTextView)
             view.addSubview(gptDescriptionLabel)
@@ -182,6 +203,8 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
           gptDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
           buttonContainer.translatesAutoresizingMaskIntoConstraints = false
           presetStackView.translatesAutoresizingMaskIntoConstraints = false
+          gptNameLabel.translatesAutoresizingMaskIntoConstraints = false
+            gptNameTextField.translatesAutoresizingMaskIntoConstraints = false
 
           NSLayoutConstraint.activate([
               apiKeyTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -199,7 +222,7 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
               gptDescriptionLabel.topAnchor.constraint(equalTo: buttonContainer.bottomAnchor, constant: 10),
               gptDescriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
               gptDescriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-              gptSettingsLabel.topAnchor.constraint(equalTo: gptDescriptionLabel.bottomAnchor, constant: 20),
+              gptSettingsLabel.topAnchor.constraint(equalTo: gptNameTextField.bottomAnchor, constant: 20),
               gptSettingsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
               gptSettingsTextView.topAnchor.constraint(equalTo: gptSettingsLabel.bottomAnchor, constant: 5),
               gptSettingsTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -217,7 +240,12 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
               presetStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
               presetStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
               loadPresetButton.heightAnchor.constraint(equalToConstant: 40),
-              savePresetButton.heightAnchor.constraint(equalToConstant: 40)
+              savePresetButton.heightAnchor.constraint(equalToConstant: 40),
+              gptNameLabel.topAnchor.constraint(equalTo: gptDescriptionLabel.bottomAnchor, constant: 20),
+              gptNameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+              gptNameTextField.topAnchor.constraint(equalTo: gptNameLabel.bottomAnchor, constant: 5),
+              gptNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+              gptNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
           ])
       }
 
@@ -257,6 +285,7 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
 
     @objc func clearSettings() {
+        gptNameTextField.text = ""
         gptSettingsTextView.text = ""
         for subview in buttonContainer.arrangedSubviews {
             if let button = subview as? UIButton {
@@ -275,20 +304,24 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     
     @objc func saveSettings() {
-            guard let apiKey = apiKeyTextField.text, !apiKey.isEmpty else {
-                showAlert(title: "エラー", message: "APIキーを入力してください")
-                return
-            }
-
-            let defaults = UserDefaults.standard
-            defaults.set(apiKey, forKey: "apiKey")
-            defaults.set(selectedModel, forKey: "model")
-            defaults.set(gptSettingsTextView.text, forKey: "systemMessage")
-
-            showAlert(title: "保存完了", message: "設定が保存されました") {
-                self.navigationController?.popViewController(animated: true)
-            }
+        guard let apiKey = apiKeyTextField.text, !apiKey.isEmpty else {
+            showAlert(title: "エラー", message: "APIキーを入力してください")
+            return
         }
+
+        let defaults = UserDefaults.standard
+        defaults.set(apiKey, forKey: "apiKey")
+        defaults.set(selectedModel, forKey: "model")
+        defaults.set(gptSettingsTextView.text, forKey: "systemMessage")
+        
+        let gptName = gptNameTextField.text?.isEmpty == false ? gptNameTextField.text! : selectedModel!
+        defaults.set(gptName, forKey: "gptName")
+        
+        showAlert(title: "保存完了", message: "設定が保存されました") {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+
 
     @objc func savePreset() {
             let alertController = UIAlertController(title: "プリセット名", message: "プリセットの名前を入力してください", preferredStyle: .alert)
@@ -300,6 +333,7 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                     let preset = [
                         "apiKey": self.apiKeyTextField.text ?? "",
                         "model": self.selectedModel ?? self.models.first!,
+                        "gptName": self.gptNameTextField.text ?? "",
                         "systemMessage": self.gptSettingsTextView.text ?? ""
                     ]
                     self.presets[presetName] = preset
@@ -370,6 +404,8 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                     let button = buttonContainer.arrangedSubviews[index] as? UIButton
                     button?.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
                 }
+                
+                gptNameTextField.text = preset["gptName"]?.isEmpty == false ? preset["gptName"] : selectedModel
             }
         }
 
@@ -400,6 +436,9 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             if let savedPresets = defaults.dictionary(forKey: "presets") as? [String: [String: String]] {
                 presets = savedPresets
             }
+            if let gptName = defaults.string(forKey: "gptName") {
+                gptNameTextField.text = gptName
+            }
         }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -418,3 +457,4 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         return Array(presets.keys)[row]
     }
 }
+
