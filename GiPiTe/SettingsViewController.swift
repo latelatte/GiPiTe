@@ -2,8 +2,8 @@ import UIKit
 
 class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
     
-    let models = ["gpt-3.5-turbo", "gpt-4o"]
-    var selectedModel: String? = "gpt-3.5-turbo"
+    let models = ["gpt-4o", "gpt-3.5-turbo"]
+    var selectedModel: String? = "gpt-4o"
     var presets: [String: [String: String]] = [:]
 
     let apiKeyTextField: UITextField = {
@@ -16,12 +16,24 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
 
     let apiKeyURLLabel: UILabel = {
         let label = UILabel()
-        label.text = "APIキーはこちらから取得できます: https://openai.com/index/openai-api/"
-        label.textColor = .gray
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.isUserInteractionEnabled = true
+        let fullText = "APIキーはこちらから取得できます:\nhttps://openai.com/index/openai-api/"
+        let attributedString = NSMutableAttributedString(string: fullText)
+        let linkRange = (fullText as NSString).range(of: "https://openai.com/index/openai-api/")
+        
+        // 全体のフォントと色を設定
+        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14), range: NSRange(location: 0, length: fullText.count))
+        attributedString.addAttribute(.foregroundColor, value: UIColor.gray, range: NSRange(location: 0, length: fullText.count))
+        
+        // URL部分のスタイルを設定
+        attributedString.addAttribute(.foregroundColor, value: UIColor.blue, range: linkRange)
+        attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: linkRange)
+        
+        label.numberOfLines = 0
+        label.attributedText = attributedString
+        label.isUserInteractionEnabled = true  // ユーザーインタラクションを有効にする
         return label
     }()
+
 
     let pasteButton: UIButton = {
         let button = UIButton(type: .system)
@@ -53,7 +65,7 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     let gpt4Button: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("GPT-4o", for: .normal)
-        button.tag = 1
+        button.tag = 0
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.systemBlue.cgColor
@@ -64,7 +76,7 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     let gpt35Button: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("GPT-3.5-turbo", for: .normal)
-        button.tag = 0
+        button.tag = 1
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.systemBlue.cgColor
@@ -108,7 +120,7 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
 
     let loadPresetButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("プリセットをロード", for: .normal)
+        button.setTitle("プリセットをロード/削除", for: .normal)
         button.backgroundColor = UIColor.systemGreen
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 5
@@ -136,28 +148,28 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }()
 
     override func viewDidLoad() {
-          super.viewDidLoad()
-          view.backgroundColor = .white
-          title = "設定"
-          view.addSubview(apiKeyTextField)
-          view.addSubview(apiKeyURLLabel)
-          view.addSubview(pasteButton)
-          view.addSubview(saveButton)
-          view.addSubview(clearButton)
-          view.addSubview(gptSettingsLabel)
-          view.addSubview(gptSettingsTextView)
-          view.addSubview(gptDescriptionLabel)
-          buttonContainer.addArrangedSubview(gpt4Button)
-          buttonContainer.addArrangedSubview(gpt35Button)
-          view.addSubview(buttonContainer)
-          presetStackView.addArrangedSubview(loadPresetButton)
-          presetStackView.addArrangedSubview(savePresetButton)
-          view.addSubview(presetStackView)
-          setupConstraints()
-          loadSettings()
-          let tapGesture = UITapGestureRecognizer(target: self, action: #selector(openURL))
-          apiKeyURLLabel.addGestureRecognizer(tapGesture)
-      }
+            super.viewDidLoad()
+            view.backgroundColor = .white
+            title = "設定"
+            view.addSubview(apiKeyTextField)
+            view.addSubview(apiKeyURLLabel)
+            view.addSubview(pasteButton)
+            view.addSubview(saveButton)
+            view.addSubview(clearButton)
+            view.addSubview(gptSettingsLabel)
+            view.addSubview(gptSettingsTextView)
+            view.addSubview(gptDescriptionLabel)
+            buttonContainer.addArrangedSubview(gpt4Button)
+            buttonContainer.addArrangedSubview(gpt35Button)
+            view.addSubview(buttonContainer)
+            presetStackView.addArrangedSubview(loadPresetButton)
+            presetStackView.addArrangedSubview(savePresetButton)
+            view.addSubview(presetStackView)
+            setupConstraints()
+            loadSettings()
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(openURL))
+            apiKeyURLLabel.addGestureRecognizer(tapGesture)
+        }
 
       private func setupConstraints() {
           apiKeyTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -192,7 +204,7 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
               gptSettingsTextView.topAnchor.constraint(equalTo: gptSettingsLabel.bottomAnchor, constant: 5),
               gptSettingsTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
               gptSettingsTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-              gptSettingsTextView.heightAnchor.constraint(equalToConstant: 100),
+              gptSettingsTextView.heightAnchor.constraint(equalToConstant: 150),
               saveButton.topAnchor.constraint(equalTo: gptSettingsTextView.bottomAnchor, constant: 20),
               saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
               saveButton.widthAnchor.constraint(equalToConstant: 100),
@@ -209,10 +221,24 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
           ])
       }
 
-      override func viewWillAppear(_ animated: Bool) {
-          super.viewWillAppear(animated)
-          loadSettings()
-      }
+    override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            loadSettings()
+            // デフォルトの選択モデルを gpt-4o に設定
+            for subview in buttonContainer.arrangedSubviews {
+                if let button = subview as? UIButton {
+                    button.backgroundColor = .clear
+                }
+            }
+            if let selectedModel = selectedModel, let index = models.firstIndex(of: selectedModel) {
+                let button = buttonContainer.arrangedSubviews[index] as? UIButton
+                button?.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
+            } else {
+                selectedModel = models[0]
+                let button = buttonContainer.arrangedSubviews[0] as? UIButton
+                button?.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
+            }
+        }
 
     @objc func modelButtonTapped(_ sender: UIButton) {
         for subview in buttonContainer.arrangedSubviews {
@@ -231,7 +257,6 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
 
     @objc func clearSettings() {
-        apiKeyTextField.text = ""
         gptSettingsTextView.text = ""
         for subview in buttonContainer.arrangedSubviews {
             if let button = subview as? UIButton {
@@ -367,7 +392,8 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                 let button = buttonContainer.arrangedSubviews[index] as? UIButton
                 button?.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
             } else {
-                selectedModel = models.first
+                // デフォルトを gpt-4o に設定
+                selectedModel = models[0]
                 let button = buttonContainer.arrangedSubviews[0] as? UIButton
                 button?.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
             }
