@@ -21,10 +21,21 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // 初期設定の変数
     private var apiKey: String = ""
     private var gptModel: String = ""
+    private var gptName: String = ""
     private var systemMessage: [String: String] = [:]
     
     // APIのURLを定数として宣言
     private let gptApiUrl = "https://api.openai.com/v1/chat/completions"
+    
+    // 会話履歴ボタンと閲覧ボタンの位置設定
+    private let buttonStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+        return stackView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +48,51 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             self?.startSpeechRecognition()
         }
         requestSpeechAuthorization()
+        
+        setupUIElements()
     }
+    
+    private func setupUIElements() {
+        statusLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(statusLabel)
+        NSLayoutConstraint.activate([
+            statusLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            statusLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 100),
+            statusLabel.widthAnchor.constraint(equalToConstant: 240),
+            statusLabel.heightAnchor.constraint(equalToConstant: 420)
+        ])
+        
+        
+        
+        // textOutputの配置
+            textOutput.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(textOutput)
+            NSLayoutConstraint.activate([
+                textOutput.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 350),
+                textOutput.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 33),
+                textOutput.widthAnchor.constraint(equalToConstant: 240),
+                textOutput.heightAnchor.constraint(equalToConstant: 420)
+            ])
+            
+            // viewHistoryButtonの配置
+            view.addSubview(viewHistoryButton)
+            NSLayoutConstraint.activate([
+                viewHistoryButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 370),
+                viewHistoryButton.leadingAnchor.constraint(equalTo: textOutput.trailingAnchor, constant: 5),
+                viewHistoryButton.widthAnchor.constraint(equalToConstant: 100),
+                viewHistoryButton.heightAnchor.constraint(equalToConstant: 50)
+            ])
+            
+            // saveConversationButtonの配置
+            view.addSubview(saveConversationButton)
+            NSLayoutConstraint.activate([
+                saveConversationButton.topAnchor.constraint(equalTo: viewHistoryButton.bottomAnchor, constant: 20),
+                saveConversationButton.leadingAnchor.constraint(equalTo: textOutput.trailingAnchor, constant: 5),
+                saveConversationButton.widthAnchor.constraint(equalToConstant: 100),
+                saveConversationButton.heightAnchor.constraint(equalToConstant: 50)
+            ])
+        }
+    
     
     private func setupNavigationBar() {
             // アイコン画像を指定してUIBarButtonItemを作成
@@ -65,7 +120,14 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         if let systemMessageContent = defaults.string(forKey: "systemMessage") {
             self.systemMessage = ["role": "system", "content": systemMessageContent]
         }
+        // GPTの名前が空の場合、モデル名をデフォルトとして使用
+        if let gptName = defaults.string(forKey: "gptName"), !gptName.isEmpty {
+            self.gptName = gptName
+        } else {
+            self.gptName = self.gptModel
+        }
     }
+
     
     private func initializeConversationHistory() {
         conversationHistory = [["role": "system", "content": systemMessage["content"] ?? ""]]
@@ -108,13 +170,16 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         
         textOutput.font = UIFont(name: "RoundedMplus1c", size: 15)
         textOutput.textColor = UIColor.darkGray
+        textOutput.isEditable = false
     }
+    
     
     @IBAction func startRecognition(_ sender: UIButton) {
         if !isConversationActive {  // 会話がアクティブでない場合のみ初期化
             isConversationActive = true
             loadSettings()  // セッション開始前に設定を読み込み
             initializeConversationHistory()  // 会話履歴の初期化
+            textOutput.text = "ここに会話が記録されます"
         }
         startButton.isEnabled = false
         stopButton.isEnabled = true
@@ -227,6 +292,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         statusLabel.text = "会話を終了しました。"
         startButton.isEnabled = true
         stopButton.isEnabled = false
+        saveConversationButton.isHidden = false  // 会話保存ボタンを表示
     }
     
     private func updateUIForStoppedRecognition() {
@@ -266,7 +332,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         ]
         
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.addValue("Bearer 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", forHTTPHeaderField: "Authorization")
         
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: json)
@@ -322,7 +388,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                        let message = choices.first?["message"] as? [String: Any],
                        let content = message["content"] as? String {
                         DispatchQueue.main.async {
-                            self.textOutput.text += "\nじぴて: \(content)\n"
+                            self.textOutput.text += "\n\(self.gptName): \(content)\n"
                             self.scrollTextViewToBottom()
                             self.conversationHistory.append(["role": "assistant", "content": content])
                             self.synthesizeSpeechWithStyleBertVITS2(from: content)
@@ -363,5 +429,96 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         let range = NSMakeRange(textOutput.text.count - 1, 1)
         textOutput.scrollRangeToVisible(range)
     }
+    
+    private let viewHistoryButton: UIButton = {
+            let button = UIButton(type: .system)
+            button.setTitle("会話履歴閲覧", for: .normal)
+            button.backgroundColor = UIColor(red:0.53, green:0.56, blue:0.79, alpha:1.0)
+            button.titleLabel?.font = UIFont(name: "RoundedMplus1c", size: 18)
+            button.setTitleColor(.white, for: .normal)
+            button.layer.cornerRadius = 10
+            button.addTarget(self, action: #selector(viewConversationHistory), for: .touchUpInside)
+            button.translatesAutoresizingMaskIntoConstraints = false
+            return button
+        }()
+
+        private let saveConversationButton: UIButton = {
+            let button = UIButton(type: .system)
+            button.setTitle("会話履歴保存", for: .normal)
+            button.backgroundColor = UIColor(red: 0.639, green: 0.855, blue: 0.839, alpha: 1.0)
+            button.titleLabel?.font = UIFont(name: "RoundedMplus1c", size: 18)
+            button.setTitleColor(.white, for: .normal)
+            button.layer.cornerRadius = 10
+            button.addTarget(self, action: #selector(saveConversationToFile), for: .touchUpInside)
+            button.translatesAutoresizingMaskIntoConstraints = false
+            button.isHidden = true  // 初期状態は非表示
+            return button
+        }()
+        
+    // 会話履歴を保存するボタンのアクション
+        @objc private func saveConversationToFile() {
+            let alertController = UIAlertController(title: "ファイル名", message: "保存するファイル名を入力してください。\n空欄の場合は日時がファイル名として使用されます。", preferredStyle: .alert)
+            alertController.addTextField { textField in
+                textField.placeholder = "ファイル名"
+            }
+            
+            let saveAction = UIAlertAction(title: "保存", style: .default) { [weak self] _ in
+                guard let self = self else { return }
+                let fileName = alertController.textFields?.first?.text ?? ""
+                self.saveConversation(withFileName: fileName)
+            }
+            alertController.addAction(saveAction)
+            
+            let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel, handler: nil)
+            alertController.addAction(cancelAction)
+            
+            present(alertController, animated: true, completion: nil)
+        }
+
+        private func saveConversation(withFileName fileName: String) {
+            let fileManager = FileManager.default
+            let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+            var finalFileName = fileName
+            
+            if finalFileName.isEmpty {
+                // デフォルトのファイル名を日時に設定
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+                finalFileName = dateFormatter.string(from: Date())
+            }
+            
+            let fileURL = documentsURL.appendingPathComponent("\(finalFileName).txt")
+            let conversationText = textOutput.text ?? ""
+            
+            do {
+                try conversationText.write(to: fileURL, atomically: true, encoding: .utf8)
+                showAlert(title: "保存完了", message: "会話履歴が保存されました")
+            } catch {
+                showAlert(title: "保存エラー", message: "会話履歴の保存に失敗しました: \(error.localizedDescription)")
+            }
+        }
+        
+        private func showAlert(title: String, message: String) {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(okAction)
+            present(alert, animated: true, completion: nil)
+        }
+
+    
+    
+        
+    
+    @objc private func viewConversationHistory() {
+        let historyVC = ConversationHistoryViewController()
+        navigationController?.pushViewController(historyVC, animated: true)
+    }
+
+    private func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+
+
 }
 

@@ -1,0 +1,12 @@
+
+/* Class = "UIButton"; configuration.title = "会話を終える！"; ObjectID = "Mug-wD-ctD"; */
+"Mug-wD-ctD.configuration.title" = "会話を終える！";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "Mug-wD-ctD"; */
+"Mug-wD-ctD.normalTitle" = "Button";
+
+/* Class = "UIButton"; configuration.title = "会話を始める！"; ObjectID = "n0j-tD-cSk"; */
+"n0j-tD-cSk.configuration.title" = "会話を始める！";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "n0j-tD-cSk"; */
+"n0j-tD-cSk.normalTitle" = "Button";
