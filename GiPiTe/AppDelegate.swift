@@ -33,5 +33,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
  
 }
-
-163 218 214

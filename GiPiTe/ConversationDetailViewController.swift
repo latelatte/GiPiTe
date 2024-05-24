@@ -1,11 +1,5 @@
-//
-//  ConversationDetailViewController.swift
-//  GiPiTe
-//
-//  Created by Seiya Ikeda on 2024/05/23.
-//
-
 import UIKit
+import Down
 
 class ConversationDetailViewController: UIViewController {
     
@@ -23,7 +17,7 @@ class ConversationDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = fileURL.lastPathComponent
+        title = fileURL.deletingPathExtension().lastPathComponent
         view.backgroundColor = .white
         
         textView = UITextView()
@@ -43,9 +37,20 @@ class ConversationDetailViewController: UIViewController {
     private func loadConversationDetail() {
         do {
             let content = try String(contentsOf: fileURL, encoding: .utf8)
-            textView.text = content
+            displayMarkdownContent(content)
         } catch {
             print("Error loading conversation detail: \(error)")
+        }
+    }
+    
+    private func displayMarkdownContent(_ markdown: String) {
+        do {
+            let down = Down(markdownString: markdown)
+            let attributedString = try down.toAttributedString()
+            textView.attributedText = attributedString
+        } catch {
+            textView.text = markdown
+            print("Error converting markdown to attributed string: \(error)")
         }
     }
 }

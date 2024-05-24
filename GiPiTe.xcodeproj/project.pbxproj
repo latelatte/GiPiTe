@@ -19,6 +19,7 @@
 		AD000F5E2BF83DF1000DD226 /* LaunchScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = AD000F5D2BF83DF1000DD226 /* LaunchScreen.png */; };
 		AD2675452BFEC70500DC7CCC /* ConversationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2675442BFEC70500DC7CCC /* ConversationDetailViewController.swift */; };
 		AD2675472BFECA1E00DC7CCC /* ConversationHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2675462BFECA1E00DC7CCC /* ConversationHistoryViewController.swift */; };
+		AD26754C2C00C0E100DC7CCC /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = AD26754B2C00C0E100DC7CCC /* Down */; };
 		AD40B05A2BFDAEBA003DE317 /* settings_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AD40B0592BFDAEBA003DE317 /* settings_icon.png */; };
 		AD40B05C2BFDB0F5003DE317 /* screen.png in Resources */ = {isa = PBXBuildFile; fileRef = AD40B05B2BFDB0F5003DE317 /* screen.png */; };
 		AD85E46F2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD85E46E2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf */; };
@@ -53,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD26754C2C00C0E100DC7CCC /* Down in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,6 +133,9 @@
 			dependencies = (
 			);
 			name = GiPiTe;
+			packageProductDependencies = (
+				AD26754B2C00C0E100DC7CCC /* Down */,
+			);
 			productName = GiPiTe;
 			productReference = AD000F302BF80A9D000DD226 /* GiPiTe.app */;
 			productType = "com.apple.product-type.application";
@@ -160,6 +165,9 @@
 				ja,
 			);
 			mainGroup = AD000F272BF80A9D000DD226;
+			packageReferences = (
+				AD26754A2C00C0E100DC7CCC /* XCRemoteSwiftPackageReference "Down" */,
+			);
 			productRefGroup = AD000F312BF80A9D000DD226 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -440,6 +448,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AD26754A2C00C0E100DC7CCC /* XCRemoteSwiftPackageReference "Down" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/johnxnguyen/Down";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AD26754B2C00C0E100DC7CCC /* Down */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD26754A2C00C0E100DC7CCC /* XCRemoteSwiftPackageReference "Down" */;
+			productName = Down;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AD000F282BF80A9D000DD226 /* Project object */;
 }
