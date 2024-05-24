@@ -23,10 +23,21 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // 初期設定の変数
     private var apiKey: String = ""
     private var gptModel: String = ""
+    private var gptName: String = ""
     private var systemMessage: [String: String] = [:]
     
     // APIのURLを定数として宣言
     private let gptApiUrl = "https://api.openai.com/v1/chat/completions"
+    
+    // 会話履歴ボタンと閲覧ボタンの位置設定
+    private let buttonStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+        return stackView
+    }()
     
     // 会話履歴ボタンと閲覧ボタンの位置設定
     private let buttonStackView: UIStackView = {
@@ -119,6 +130,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             self.gptName = self.gptModel
         }
     }
+
     
     private func initializeConversationHistory() {
         conversationHistory = [["role": "system", "content": systemMessage["content"] ?? ""]]
@@ -163,6 +175,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         textOutput.textColor = UIColor.darkGray
         textOutput.isEditable = false
     }
+    
     
     @IBAction func startRecognition(_ sender: UIButton) {
         if !isConversationActive {
@@ -335,7 +348,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         ]
         
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.addValue("Bearer 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", forHTTPHeaderField: "Authorization")
         
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: json)
