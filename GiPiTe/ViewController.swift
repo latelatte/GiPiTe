@@ -2,6 +2,7 @@ import UIKit
 import AVFoundation
 import Speech
 
+
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var stopButton: UIButton!
@@ -14,9 +15,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     private let audioEngine = AVAudioEngine()
     private var silenceTimer: Timer?
     private var recognizedText: String = ""
-    private var conversationHistory: [[String: String]] = []
+    var conversationHistory: [[String: String]] = []
     private var isConversationActive = false
     private let synthesizer = StyleBertVITS2Synthesizer()
+    var gptName: String = "じぴて"
     
     // 初期設定の変数
     private var apiKey: String = ""
@@ -26,33 +28,79 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // APIのURLを定数として宣言
     private let gptApiUrl = "https://api.openai.com/v1/chat/completions"
     
+    // 会話履歴ボタンと閲覧ボタンの位置設定
+    private let buttonStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+        return stackView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
         loadSettings()
         setupNavigationBar()
-        self.view.backgroundColor = UIColor(red:0.53, green:0.56, blue:0.79, alpha:1.0) 
+        self.view.backgroundColor = UIColor(red:0.53, green:0.56, blue:0.79, alpha:1.0)
         speechRecognizer?.delegate = self
         synthesizer.onAudioPlaybackFinished = { [weak self] in
             self?.startSpeechRecognition()
         }
         requestSpeechAuthorization()
+        
+        setupUIElements()
+    }
+    
+    
+    private func setupUIElements() {
+        statusLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(statusLabel)
+        NSLayoutConstraint.activate([
+            statusLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            statusLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 100),
+            statusLabel.widthAnchor.constraint(equalToConstant: 240),
+            statusLabel.heightAnchor.constraint(equalToConstant: 420)
+        ])
+        
+        textOutput.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(textOutput)
+        NSLayoutConstraint.activate([
+            textOutput.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 350),
+            textOutput.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 33),
+            textOutput.widthAnchor.constraint(equalToConstant: 240),
+            textOutput.heightAnchor.constraint(equalToConstant: 420)
+        ])
+        
+        view.addSubview(viewHistoryButton)
+        NSLayoutConstraint.activate([
+            viewHistoryButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 370),
+            viewHistoryButton.leadingAnchor.constraint(equalTo: textOutput.trailingAnchor, constant: 5),
+            viewHistoryButton.widthAnchor.constraint(equalToConstant: 100),
+            viewHistoryButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        
+        view.addSubview(saveConversationButton)
+        NSLayoutConstraint.activate([
+            saveConversationButton.topAnchor.constraint(equalTo: viewHistoryButton.bottomAnchor, constant: 20),
+            saveConversationButton.leadingAnchor.constraint(equalTo: textOutput.trailingAnchor, constant: 5),
+            saveConversationButton.widthAnchor.constraint(equalToConstant: 100),
+            saveConversationButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
     }
     
     private func setupNavigationBar() {
-            // アイコン画像を指定してUIBarButtonItemを作成
-            if let settingsImage = UIImage(named: "settings_icon")?.withRenderingMode(.alwaysOriginal) {
-                let settingsButton = UIBarButtonItem(image: settingsImage, style: .plain, target: self, action: #selector(openSettings))
-                
-                // ナビゲーションバーにボタンを設定
-                self.navigationItem.rightBarButtonItem = settingsButton
-            }
+        if let settingsImage = UIImage(named: "settings_icon")?.withRenderingMode(.alwaysOriginal) {
+            let settingsButton = UIBarButtonItem(image: settingsImage, style: .plain, target: self, action: #selector(openSettings))
+            self.navigationItem.rightBarButtonItem = settingsButton
         }
+    }
     
     @objc private func openSettings() {
-            let settingsVC = SettingsViewController()
-            navigationController?.pushViewController(settingsVC, animated: true)
-        }
+        let settingsVC = SettingsViewController()
+        navigationController?.pushViewController(settingsVC, animated: true)
+    }
     
     private func loadSettings() {
         let defaults = UserDefaults.standard
@@ -64,6 +112,11 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
         if let systemMessageContent = defaults.string(forKey: "systemMessage") {
             self.systemMessage = ["role": "system", "content": systemMessageContent]
+        }
+        if let gptName = defaults.string(forKey: "gptName"), !gptName.isEmpty {
+            self.gptName = gptName
+        } else {
+            self.gptName = self.gptModel
         }
     }
     
@@ -108,13 +161,15 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         
         textOutput.font = UIFont(name: "RoundedMplus1c", size: 15)
         textOutput.textColor = UIColor.darkGray
+        textOutput.isEditable = false
     }
     
     @IBAction func startRecognition(_ sender: UIButton) {
-        if !isConversationActive {  // 会話がアクティブでない場合のみ初期化
+        if !isConversationActive {
             isConversationActive = true
-            loadSettings()  // セッション開始前に設定を読み込み
-            initializeConversationHistory()  // 会話履歴の初期化
+            loadSettings()
+            textOutput.text = "ここに会話が記録されます  \n"
+            initializeConversationHistory()
         }
         startButton.isEnabled = false
         stopButton.isEnabled = true
@@ -172,7 +227,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                     self.recognitionTask = nil
                     self.updateUIForStoppedRecognition()
                     if !self.recognizedText.isEmpty {
-                        self.textOutput.text += "\nわたし: \(self.recognizedText)\n"
+                        self.textOutput.text += "\nわたし: \(self.recognizedText)  \n"
                         self.scrollTextViewToBottom()
                         if self.recognizedText.contains("またね") {
                             self.endConversation()
@@ -227,11 +282,12 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         statusLabel.text = "会話を終了しました。"
         startButton.isEnabled = true
         stopButton.isEnabled = false
+        saveConversationButton.isHidden = false
     }
     
     private func updateUIForStoppedRecognition() {
         startButton.isEnabled = true
-        stopButton.isEnabled = true  // "会話を終える"ボタンを有効化
+        stopButton.isEnabled = true
         statusLabel.text = "音声認識が停止しました"
         silenceTimer?.invalidate()
     }
@@ -251,15 +307,28 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
     }
     
+    func restoreTextOutput(from fileURL: URL) {
+        do {
+            let content = try String(contentsOf: fileURL, encoding: .utf8)
+            textOutput.text = content
+        } catch {
+            print("Error loading conversation detail: \(error)")
+        }
+        scrollTextViewToBottom() 
+    }
+
+    func appendToConversationHistory(_ history: [[String: String]]) {
+        conversationHistory.append(contentsOf: history)
+        isConversationActive = true  // 会話がアクティブであることを設定
+    }
+    
     private func sendToGPT(_ text: String) {
         let serverURL = URL(string: gptApiUrl)!
         var request = URLRequest(url: serverURL)
         request.httpMethod = "POST"
         
-        // ユーザーメッセージを追加
         conversationHistory.append(["role": "user", "content": text])
-
-        // APIリクエストのペイロードを構築
+        
         let json: [String: Any] = [
             "model": gptModel,
             "messages": conversationHistory
@@ -272,7 +341,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             let jsonData = try JSONSerialization.data(withJSONObject: json)
             request.httpBody = jsonData
             
-            // JSONデータをログに記録
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 print("リクエストボディ: \(jsonString)")
             }
@@ -301,7 +369,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             guard httpResponse.statusCode == 200 else {
                 DispatchQueue.main.async {
                     self.statusLabel.text = "HTTPステータスコードエラー: \(httpResponse.statusCode)"
-                    // レスポンスの内容をログに記録
                     if let data = data, let responseString = String(data: data, encoding: .utf8) {
                         print("レスポンス内容: \(responseString)")
                     }
@@ -322,7 +389,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                        let message = choices.first?["message"] as? [String: Any],
                        let content = message["content"] as? String {
                         DispatchQueue.main.async {
-                            self.textOutput.text += "\nじぴて: \(content)\n"
+                            self.textOutput.text += "\n\(self.gptName): \(content)  \n"
                             self.scrollTextViewToBottom()
                             self.conversationHistory.append(["role": "assistant", "content": content])
                             self.synthesizeSpeechWithStyleBertVITS2(from: content)
@@ -348,14 +415,13 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
 
     private func synthesizeSpeechWithStyleBertVITS2(from text: String) {
-        stopSpeechRecognition()  // 音声認識を一時停止
+        stopSpeechRecognition()
         synthesizer.synthesizeSpeech(from: text) { error in
             if let error = error {
                 DispatchQueue.main.async {
                     self.statusLabel.text = "音声合成エラー: \(error.localizedDescription)"
                 }
             }
-            // 音声再生が完了したら、音声認識を再開
         }
     }
 
@@ -363,5 +429,112 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         let range = NSMakeRange(textOutput.text.count - 1, 1)
         textOutput.scrollRangeToVisible(range)
     }
-}
 
+    private let viewHistoryButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("会話履歴閲覧", for: .normal)
+        button.backgroundColor = UIColor(red:0.53, green:0.56, blue:0.79, alpha:1.0)
+        button.titleLabel?.font = UIFont(name: "RoundedMplus1c", size: 18)
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(viewConversationHistory), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    private let saveConversationButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("会話履歴保存", for: .normal)
+        button.backgroundColor = UIColor(red: 0.639, green: 0.855, blue: 0.839, alpha: 1.0)
+        button.titleLabel?.font = UIFont(name: "RoundedMplus1c", size: 18)
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(promptForFileNameAndSave), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true
+        return button
+    }()
+
+    @objc private func promptForFileNameAndSave() {
+        let alertController = UIAlertController(title: "ファイル名", message: "保存するファイル名を入力してください。\n空欄の場合は日時がファイル名として使用されます。", preferredStyle: .alert)
+        alertController.addTextField { textField in
+            textField.placeholder = "ファイル名"
+        }
+        
+        let saveAction = UIAlertAction(title: "保存", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            let fileName = alertController.textFields?.first?.text ?? ""
+            self.confirmAndSaveConversation(withFileName: fileName)
+        }
+        alertController.addAction(saveAction)
+        
+        let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+
+    private func confirmAndSaveConversation(withFileName fileName: String) {
+        let fileManager = FileManager.default
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+        var finalFileName = fileName
+
+        if finalFileName.isEmpty {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+            finalFileName = dateFormatter.string(from: Date())
+        }
+
+        let textFileURL = documentsURL.appendingPathComponent("\(finalFileName).txt")
+        let jsonFileURL = documentsURL.appendingPathComponent("\(finalFileName).json")
+
+        if fileManager.fileExists(atPath: textFileURL.path) || fileManager.fileExists(atPath: jsonFileURL.path) {
+            // 上書き確認ダイアログを表示
+            let overwriteAlert = UIAlertController(title: "上書き確認", message: "同じ名前のファイルが既に存在します。上書きしますか？", preferredStyle: .alert)
+            
+            let overwriteAction = UIAlertAction(title: "上書き", style: .destructive) { [weak self] _ in
+                self?.saveConversationFiles(at: textFileURL, jsonFileURL: jsonFileURL)
+            }
+            overwriteAlert.addAction(overwriteAction)
+            
+            let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel, handler: nil)
+            overwriteAlert.addAction(cancelAction)
+            
+            present(overwriteAlert, animated: true, completion: nil)
+        } else {
+            saveConversationFiles(at: textFileURL, jsonFileURL: jsonFileURL)
+        }
+    }
+
+    private func saveConversationFiles(at textFileURL: URL, jsonFileURL: URL) {
+        let conversationText = textOutput.text ?? ""
+
+        do {
+            try conversationText.write(to: textFileURL, atomically: true, encoding: .utf8)
+        } catch {
+            showAlert(title: "保存エラー", message: "会話履歴の保存に失敗しました: \(error.localizedDescription)")
+            return
+        }
+
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: conversationHistory, options: .prettyPrinted)
+            try jsonData.write(to: jsonFileURL)
+            showAlert(title: "保存完了", message: "会話履歴が保存されました")
+        } catch {
+            showAlert(title: "保存エラー", message: "会話履歴の保存に失敗しました: \(error.localizedDescription)")
+        }
+    }
+
+
+    @objc private func viewConversationHistory() {
+        let historyVC = ConversationHistoryViewController()
+        navigationController?.pushViewController(historyVC, animated: true)
+    }
+
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+}

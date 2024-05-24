@@ -17,6 +17,9 @@
 		AD000F5B2BF8320C000DD226 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD000F572BF8320C000DD226 /* Assets.xcassets */; };
 		AD000F5C2BF8320C000DD226 /* playstore.png in Resources */ = {isa = PBXBuildFile; fileRef = AD000F582BF8320C000DD226 /* playstore.png */; };
 		AD000F5E2BF83DF1000DD226 /* LaunchScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = AD000F5D2BF83DF1000DD226 /* LaunchScreen.png */; };
+		AD2675452BFEC70500DC7CCC /* ConversationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2675442BFEC70500DC7CCC /* ConversationDetailViewController.swift */; };
+		AD2675472BFECA1E00DC7CCC /* ConversationHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2675462BFECA1E00DC7CCC /* ConversationHistoryViewController.swift */; };
+		AD26754C2C00C0E100DC7CCC /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = AD26754B2C00C0E100DC7CCC /* Down */; };
 		AD40B05A2BFDAEBA003DE317 /* settings_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AD40B0592BFDAEBA003DE317 /* settings_icon.png */; };
 		AD40B05C2BFDB0F5003DE317 /* screen.png in Resources */ = {isa = PBXBuildFile; fileRef = AD40B05B2BFDB0F5003DE317 /* screen.png */; };
 		AD85E46F2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD85E46E2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf */; };
@@ -36,6 +39,10 @@
 		AD000F572BF8320C000DD226 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AD000F582BF8320C000DD226 /* playstore.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playstore.png; sourceTree = "<group>"; };
 		AD000F5D2BF83DF1000DD226 /* LaunchScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchScreen.png; sourceTree = "<group>"; };
+		AD2675442BFEC70500DC7CCC /* ConversationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDetailViewController.swift; sourceTree = "<group>"; };
+		AD2675462BFECA1E00DC7CCC /* ConversationHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationHistoryViewController.swift; sourceTree = "<group>"; };
+		AD2675482BFEE32700DC7CCC /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
+		AD2675492BFEE32700DC7CCC /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		AD40B0592BFDAEBA003DE317 /* settings_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_icon.png; sourceTree = "<group>"; };
 		AD40B05B2BFDB0F5003DE317 /* screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screen.png; sourceTree = "<group>"; };
 		AD85E46E2BF84F3600DE6801 /* MPLUSRounded1c-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MPLUSRounded1c-Bold.ttf"; sourceTree = "<group>"; };
@@ -47,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD26754C2C00C0E100DC7CCC /* Down in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +90,8 @@
 				AD000F3E2BF80A9F000DD226 /* LaunchScreen.storyboard */,
 				AD000F412BF80A9F000DD226 /* Info.plist */,
 				AD85E4702BFD122A00DE6801 /* SettingsViewController.swift */,
+				AD2675442BFEC70500DC7CCC /* ConversationDetailViewController.swift */,
+				AD2675462BFECA1E00DC7CCC /* ConversationHistoryViewController.swift */,
 			);
 			path = GiPiTe;
 			sourceTree = "<group>";
@@ -123,6 +133,9 @@
 			dependencies = (
 			);
 			name = GiPiTe;
+			packageProductDependencies = (
+				AD26754B2C00C0E100DC7CCC /* Down */,
+			);
 			productName = GiPiTe;
 			productReference = AD000F302BF80A9D000DD226 /* GiPiTe.app */;
 			productType = "com.apple.product-type.application";
@@ -144,13 +157,17 @@
 			};
 			buildConfigurationList = AD000F2B2BF80A9D000DD226 /* Build configuration list for PBXProject "GiPiTe" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				ja,
 			);
 			mainGroup = AD000F272BF80A9D000DD226;
+			packageReferences = (
+				AD26754A2C00C0E100DC7CCC /* XCRemoteSwiftPackageReference "Down" */,
+			);
 			productRefGroup = AD000F312BF80A9D000DD226 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -186,8 +203,10 @@
 			files = (
 				AD000F482BF80B3A000DD226 /* StyleBertVITS2Synthesizer.swift in Sources */,
 				AD000F382BF80A9D000DD226 /* ViewController.swift in Sources */,
+				AD2675452BFEC70500DC7CCC /* ConversationDetailViewController.swift in Sources */,
 				AD000F342BF80A9D000DD226 /* AppDelegate.swift in Sources */,
 				AD85E4712BFD122A00DE6801 /* SettingsViewController.swift in Sources */,
+				AD2675472BFECA1E00DC7CCC /* ConversationHistoryViewController.swift in Sources */,
 				AD000F362BF80A9D000DD226 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -199,6 +218,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				AD000F3A2BF80A9D000DD226 /* Base */,
+				AD2675482BFEE32700DC7CCC /* ja */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -207,6 +227,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				AD000F3F2BF80A9F000DD226 /* Base */,
+				AD2675492BFEE32700DC7CCC /* ja */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -219,6 +240,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -282,6 +304,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -346,6 +369,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GiPiTe/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app uses the microphone to use the speech recognition function.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses the speech recognition due to sending your message to GPT.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -379,6 +404,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GiPiTe/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app uses the microphone to use the speech recognition function.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses the speech recognition due to sending your message to GPT.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -421,6 +448,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AD26754A2C00C0E100DC7CCC /* XCRemoteSwiftPackageReference "Down" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/johnxnguyen/Down";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AD26754B2C00C0E100DC7CCC /* Down */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD26754A2C00C0E100DC7CCC /* XCRemoteSwiftPackageReference "Down" */;
+			productName = Down;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AD000F282BF80A9D000DD226 /* Project object */;
 }
