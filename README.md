@@ -15,6 +15,7 @@
 ![スクリーンショット1](Resources/splashscreen.jpeg)
 ![スクリーンショット2](Resources/main-screen.jpeg)
 ![スクリーンショット3](Resources/settings-screen.jpeg)
+![スクリーンショット4](Resources/history-view.jpeg)
 
 
 
