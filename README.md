@@ -23,11 +23,10 @@
 
 1. このリポジトリをクローンします:
     ```sh
-    git clone https://github.com/yourusername/your-repo-name.git
+    git clone https://github.com/Latelatte/GiPiTe.git
     ```
 2. 必要な依存関係をインストールします。CocoaPodsまたはSwift Package Managerを使用している場合は、それに従ってください。
 
-3. `Info.plist` ファイルにAPIキーとモデル情報を追加します。
 
 ## 使用方法
 
