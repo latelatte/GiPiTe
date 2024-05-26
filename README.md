@@ -12,9 +12,9 @@
 
 ## スクリーンショット
 
-![スクリーンショット1](splashscreen.jpeg)
-![スクリーンショット2](main-screen.jpeg)
-![スクリーンショット3](settings-screen.jpeg)
+![スクリーンショット1](Resources/splashscreen.jpeg)
+![スクリーンショット2](Resources/main-screen.jpeg)
+![スクリーンショット3](Resources/settings-screen.jpeg)
 
 
 
