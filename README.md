@@ -39,6 +39,129 @@
 
 ## 開発者向け情報
 
+### GCEの設定
+
+SBV2をクローンする
+
+```bash
+git clone https://github.com/litagin02/Style-Bert-VITS2.git
+cd Style-Bert-VITS2
+```
+
+サーバーの初期設定 主にPythonを入れる部分
+
+```bash
+sudo apt-get update
+sudo apt-get install -y software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install -y python3.10 python3.10-venv python3.10-dev nginx
+```
+
+Pythonの優先順位を変更
+
+最後にバージョンの確認
+
+```bash
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
+sudo update-alternatives --config python3
+python3 -V
+```
+
+仮想環境の構築
+
+```bash
+python3.10 -m venv venv
+source venv/bin/activate
+```
+
+必要なパッケージのインストール
+
+初期化までついでに実行
+
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install -r requirements.txt
+python initialize.py
+```
+
+GCEでバゲットを使用できるように設定
+
+```bash
+curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-400.0.0-linux-x86_64.tar.gz
+tar -xf google-cloud-sdk-400.0.0-linux-x86_64.tar.gz
+./google-cloud-sdk/install.shpytho
+gcloud init
+```
+
+プロジェクトIDを訊かれるので、以下を入力
+
+```bash
+master-works-423913-n9
+```
+
+### 以下必要になるファイルをバゲットからVMに送信
+
+```bash
+gsutil cp gs://bert-models-latte/Dockerfile.deploy ~/Style-Bert-VITS2/ # Dockerfileをコピー
+gsutil cp gs://bert-models-latte/default_config.yml ~/Style-Bert-VITS2/ # configファイルをコピー
+gsutil cp -r gs://bert-models-latte/himari-v3 ~/Style-Bert-VITS2/model_assets/ # himariのモデルファイルをコピー
+gsutil cp gs://bert-models-latte/server_editor.py ~/Style-Bert-VITS2/ # server_editorをコピー
+gsutil cp gs://bert-models-latte/g2p_utils.py ~/Style-Bert-VITS2/style_bert_vits2/nlp/japanese/ # g2p_utilsをコピー
+```
+
+#### Dockerの設定 (現在使ってないから必要ないかも)
+
+```bash
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-get install -y docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo systemctl status docker
+sudo usermod -aG docker $USER
+newgrp docker
+source venv/bin/activate
+```
+
+##### Dockerのデプロイとコンテナの起動
+
+```bash
+docker build -t sbv2 -f Dockerfile.deploy .
+docker run -d -p 8000:8000 sbv2
+```
+
+##### Dockerの使用状況とかの確認
+
+```bash
+docker ps -a
+docker logs -f
+```
+
+ディスクスペースが無くなった際はこのコマンドでキャッシュを削除
+
+```bash
+docker system prune -a
+```
+
+### `Server_editor.py`を実行
+
+```bash
+cd Style-Bert-VITS2
+source venv/bin/activate
+nohup python server_editor.py --line_length 500 --line_count 10 > server.log 2>&1 &
+```
+
+サーバーを切断したいときは以下のコマンドでPIDを確認してタスクキル
+
+```bash
+ps aux | grep server_editor.py
+kill
+```
+
+
 ### プロジェクト構造
 
 - `ViewController.swift`: メインの対話ロジック
