@@ -71,7 +71,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             textOutput.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 350),
             textOutput.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 33),
             textOutput.widthAnchor.constraint(equalToConstant: 240),
-            textOutput.heightAnchor.constraint(equalToConstant: 380)
+            textOutput.heightAnchor.constraint(equalToConstant: 385)
         ])
         
         view.addSubview(viewHistoryButton)
@@ -261,7 +261,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             do {
                 try audioEngine.start()
                 statusLabel.text = "音声認識を開始しました…"
-                startSilenceTimer()
+//                startSilenceTimer()
             } catch {
                 statusLabel.text = "音声エンジンを開始できませんでした。エラー: \(error.localizedDescription)"
             }
@@ -279,6 +279,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         recognitionRequest = nil
         recognitionTask = nil
         updateUIForStoppedRecognition()
+        startSilenceTimer()
     }
     
     private func endConversation() {
@@ -301,7 +302,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
     
     private func startSilenceTimer() {
-        silenceTimer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(handleSilenceTimeout), userInfo: nil, repeats: false)
+        silenceTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(handleSilenceTimeout), userInfo: nil, repeats: false)
     }
     
     private func resetSilenceTimer() {
@@ -442,9 +443,13 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
 
     private func scrollTextViewToBottom() {
-        let range = NSMakeRange(textOutput.text.count - 1, 1)
-        textOutput.scrollRangeToVisible(range)
+        DispatchQueue.main.async {
+            let bottom = NSMakeRange(self.textOutput.text.count - 1, 1)
+            self.textOutput.scrollRangeToVisible(bottom)
+        }
     }
+
+
 
     private let viewHistoryButton: UIButton = {
         let button = UIButton(type: .system)
