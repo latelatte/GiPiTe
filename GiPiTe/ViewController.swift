@@ -13,6 +13,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
     private var silenceTimer: Timer?
+    private var audioPlayer: AVAudioPlayer?
     private var recognizedText: String = ""
     var conversationHistory: [[String: String]] = []
     private var isConversationActive = false
@@ -70,7 +71,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             textOutput.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 350),
             textOutput.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 33),
             textOutput.widthAnchor.constraint(equalToConstant: 240),
-            textOutput.heightAnchor.constraint(equalToConstant: 420)
+            textOutput.heightAnchor.constraint(equalToConstant: 380)
         ])
         
         view.addSubview(viewHistoryButton)
@@ -184,6 +185,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     private func startSpeechRecognition() {
         if !audioEngine.isRunning {
+            UIApplication.shared.isIdleTimerDisabled = true
             recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             guard let recognitionRequest = recognitionRequest else {
                 statusLabel.text = "認識リクエストを作成できませんでした。"
@@ -270,6 +272,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         if audioEngine.isRunning {
             audioEngine.stop()
             audioEngine.inputNode.removeTap(onBus: 0)
+            UIApplication.shared.isIdleTimerDisabled = false
         }
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
@@ -285,6 +288,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         startButton.isEnabled = true
         stopButton.isEnabled = false
         saveConversationButton.isHidden = false
+        UIApplication.shared.isIdleTimerDisabled = false
+        
+        synthesizer.audioPlayer?.stop()
     }
     
     private func updateUIForStoppedRecognition() {
@@ -418,14 +424,22 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     private func synthesizeSpeechWithStyleBertVITS2(from text: String) {
         stopSpeechRecognition()
-        synthesizer.synthesizeSpeech(from: text) { error in
+        UIApplication.shared.isIdleTimerDisabled = true
+        synthesizer.synthesizeSpeech(from: text) { [weak self] error in
             if let error = error {
                 DispatchQueue.main.async {
-                    self.statusLabel.text = "音声合成エラー: \(error.localizedDescription)"
+                    self?.statusLabel.text = "音声合成エラー: \(error.localizedDescription)"
+                    UIApplication.shared.isIdleTimerDisabled = false
                 }
+                return
             }
+
+            // Audio playback will be handled in the `playAudioData` method of `StyleBertVITS2Synthesizer`
         }
     }
+
+
+
 
     private func scrollTextViewToBottom() {
         let range = NSMakeRange(textOutput.text.count - 1, 1)
@@ -538,5 +552,13 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
+    }
+    
+    
+}
+extension ViewController: AVAudioPlayerDelegate {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        // 音声再生が終了したときの処理
+        startSpeechRecognition()
     }
 }

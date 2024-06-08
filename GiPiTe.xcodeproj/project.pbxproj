@@ -39,6 +39,9 @@
 		AD000F572BF8320C000DD226 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AD000F582BF8320C000DD226 /* playstore.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playstore.png; sourceTree = "<group>"; };
 		AD000F5D2BF83DF1000DD226 /* LaunchScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchScreen.png; sourceTree = "<group>"; };
+		AD1A328C2C13B90A0056CEF0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		AD1A32AE2C13C17F0056CEF0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		AD1A32B02C13C1910056CEF0 /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = Library/Frameworks/Python3.framework; sourceTree = DEVELOPER_DIR; };
 		AD2675442BFEC70500DC7CCC /* ConversationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDetailViewController.swift; sourceTree = "<group>"; };
 		AD2675462BFECA1E00DC7CCC /* ConversationHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationHistoryViewController.swift; sourceTree = "<group>"; };
 		AD2675482BFEE32700DC7CCC /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
@@ -68,6 +71,7 @@
 				AD000F322BF80A9D000DD226 /* GiPiTe */,
 				AD000F4B2BF82C5A000DD226 /* Resources */,
 				AD000F312BF80A9D000DD226 /* Products */,
+				AD1A328B2C13B90A0056CEF0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -115,6 +119,16 @@
 				AD000F582BF8320C000DD226 /* playstore.png */,
 			);
 			path = AppIcons;
+			sourceTree = "<group>";
+		};
+		AD1A328B2C13B90A0056CEF0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AD1A32B02C13C1910056CEF0 /* Python3.framework */,
+				AD1A32AE2C13C17F0056CEF0 /* AVFoundation.framework */,
+				AD1A328C2C13B90A0056CEF0 /* Foundation.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -381,7 +395,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 24.5.24;
+				MARKETING_VERSION = 24.6.7;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.latelatte.GiPiTe;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -416,7 +430,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 24.5.24;
+				MARKETING_VERSION = 24.6.7;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.latelatte.GiPiTe;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
