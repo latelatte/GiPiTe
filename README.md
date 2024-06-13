@@ -23,7 +23,7 @@
 
 1. このリポジトリをクローンします:
     ```sh
-    git clone https://github.com/Latelatte/GiPiTe.git
+    git clone https://github.com/latelatte/GiPiTe.git
     ```
 2. 必要な依存関係をインストールします。CocoaPodsまたはSwift Package Managerを使用している場合は、それに従ってください。
 3. Xcodeを使ってデバイスにビルドしてください。
