@@ -160,29 +160,6 @@ nohup python server_editor.py --line_length 500 --line_count 10 > server.log 2>&
 ps aux | grep server_editor.py
 ```
 
-
-### プロジェクト構造
-
-- `ViewController.swift`: メインの対話ロジック
-- `SettingsViewController.swift`: 設定画面のロジック
-- `ConversationHistoryViewController.swift`: 会話履歴の表示
-- `ConversationDetailViewController.swift`: 個別の会話履歴の詳細表示
-
-### 依存関係
-
-このプロジェクトは以下のオープンソースプロジェクトを使用しています：
-
-- [Style-Bert-VITS2](https://github.com/litagin02/Style-Bert-VITS2) - MITライセンス
-- [Speech](https://developer.apple.com/documentation/speech) - Appleのライセンス
-- [Foundation](https://developer.apple.com/documentation/foundation) - Appleのライセンス
-- [AVFoundation](https://developer.apple.com/documentation/avfoundation) - Appleのライセンス
-- [MarkdownKit](https://github.com/bmoliveira/MarkdownKit) - MITライセンス
-- [UIKit](https://developer.apple.com/documentation/uikit) - Appleのライセンス
-
-### 使用しているAPI
-
-このプロジェクトはOpenAIのAPIを使用しています。APIの使用は[OpenAIの利用規約](https://openai.com/terms)に準拠しています。
-
 ## 貢献方法
 
 1. リポジトリをフォークします。
@@ -200,6 +177,36 @@ ps aux | grep server_editor.py
     ```
 5. プルリクエストを作成します。
 
+### プロジェクト構造
+
+- `ViewController.swift`: メインの対話ロジック
+- `SettingsViewController.swift`: 設定画面のロジック
+- `ConversationHistoryViewController.swift`: 会話履歴の表示
+- `ConversationDetailViewController.swift`: 個別の会話履歴の詳細表示
+
+## 依存関係
+
+このプロジェクトは以下のオープンソースプロジェクトを使用しています：
+
+- [Style-Bert-VITS2](https://github.com/litagin02/Style-Bert-VITS2) - GNU Affero General Public License v3.0
+- [Speech](https://developer.apple.com/documentation/speech) - Appleのライセンス
+- [Foundation](https://developer.apple.com/documentation/foundation) - Appleのライセンス
+- [AVFoundation](https://developer.apple.com/documentation/avfoundation) - Appleのライセンス
+- [MarkdownKit](https://github.com/bmoliveira/MarkdownKit) - MITライセンス
+- [UIKit](https://developer.apple.com/documentation/uikit) - Appleのライセンス
+
+## 使用しているAPI
+
+このプロジェクトはOpenAIのAPIを使用しています。APIの使用は[OpenAIの利用規約](https://openai.com/terms)に準拠しています。
+
+## 使用しているモデル
+
+このプロジェクトでは、[VOICEVOX](https://voicevox.hiroshiba.jp/)の冥鳴ひまりモデルを使用しています。VOICEVOXエンジンの一部として提供される音声合成モデルを利用しています。
+
+## 特定のモジュールのライセンス
+
+このプロジェクトは `text/user_dict/` モジュールを使用しており、これは [GNU Lesser General Public License v3.0](LGPL_LICENSE) の下でライセンスされています。
+
 ## ライセンス
 
-このプロジェクトは [MIT ライセンス](LICENSE) の下でライセンスされています。
+このプロジェクトは [GNU Affero General Public License v3.0](LICENSE) の下でライセンスされています。
