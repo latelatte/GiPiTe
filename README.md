@@ -170,9 +170,18 @@ ps aux | grep server_editor.py
 
 ### 依存関係
 
-- `Speech`: 音声認識ライブラリ
-- `AVFoundation`: 音声再生ライブラリ
-- `MarkdownKit`: マークダウン表示ライブラリ
+このプロジェクトは以下のオープンソースプロジェクトを使用しています：
+
+- [Style-Bert-VITS2](https://github.com/litagin02/Style-Bert-VITS2) - MITライセンス
+- [Speech](https://developer.apple.com/documentation/speech) - Appleのライセンス
+- [Foundation](https://developer.apple.com/documentation/foundation) - Appleのライセンス
+- [AVFoundation](https://developer.apple.com/documentation/avfoundation) - Appleのライセンス
+- [MarkdownKit](https://github.com/bmoliveira/MarkdownKit) - MITライセンス
+- [UIKit](https://developer.apple.com/documentation/uikit) - Appleのライセンス
+
+### 使用しているAPI
+
+このプロジェクトはOpenAIのAPIを使用しています。APIの使用は[OpenAIの利用規約](https://openai.com/terms)に準拠しています。
 
 ## 貢献方法
 
@@ -193,4 +202,4 @@ ps aux | grep server_editor.py
 
 ## ライセンス
 
-このプロジェクトはMITライセンスの下で公開されています。詳細はLICENSEファイルを参照してください。
+このプロジェクトは [MIT ライセンス](LICENSE) の下でライセンスされています。
