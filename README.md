@@ -195,15 +195,15 @@ ps aux | grep server_editor.py
 - [MarkdownKit](https://github.com/bmoliveira/MarkdownKit) - MITライセンス
 - [UIKit](https://developer.apple.com/documentation/uikit) - Appleのライセンス
 
-## 使用しているAPI
+### 使用しているAPI
 
 このプロジェクトはOpenAIのAPIを使用しています。APIの使用は[OpenAIの利用規約](https://openai.com/terms)に準拠しています。
 
-## 使用しているモデル
+### 使用しているモデル
 
 このプロジェクトでは、[VOICEVOX](https://voicevox.hiroshiba.jp/)の冥鳴ひまりモデルを使用しています。VOICEVOXエンジンの一部として提供される音声合成モデルを利用しています。
 
-## 特定のモジュールのライセンス
+### 特定のモジュールのライセンス
 
 このプロジェクトは `text/user_dict/` モジュールを使用しており、これは [GNU Lesser General Public License v3.0](LGPL_LICENSE) の下でライセンスされています。
 
