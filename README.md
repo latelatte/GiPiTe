@@ -158,7 +158,6 @@ nohup python server_editor.py --line_length 500 --line_count 10 > server.log 2>&
 
 ```bash
 ps aux | grep server_editor.py
-kill
 ```
 
 
