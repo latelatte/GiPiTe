@@ -302,7 +302,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
     
     private func startSilenceTimer() {
-        silenceTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(handleSilenceTimeout), userInfo: nil, repeats: false)
+        silenceTimer = Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(handleSilenceTimeout), userInfo: nil, repeats: false)
     }
     
     private func resetSilenceTimer() {
