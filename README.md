@@ -83,7 +83,7 @@ source venv/bin/activate
 ```bash
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 pip install -r requirements.txt
-python initialize.py
+python initialize.py --skip_default_models
 ```
 
 GCEでバゲットを使用できるように設定
