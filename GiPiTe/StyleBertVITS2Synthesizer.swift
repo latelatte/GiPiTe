@@ -6,7 +6,7 @@ class StyleBertVITS2Synthesizer: NSObject {
     var onAudioPlaybackFinished: (() -> Void)?
 
     func synthesizeSpeech(from text: String, completion: @escaping (Error?) -> Void) {
-        let apiURL = URL(string: "http://34.81.37.8:8000/api/text_synthesis")!
+        let apiURL = URL(string: "http://34.146.101.75:8000/api/text_synthesis")!
         var request = URLRequest(url: apiURL)
         request.httpMethod = "POST"
         
