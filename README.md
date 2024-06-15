@@ -95,12 +95,6 @@ tar -xf google-cloud-sdk-400.0.0-linux-x86_64.tar.gz
 gcloud init
 ```
 
-プロジェクトIDを訊かれるので、以下を入力
-
-```bash
-master-works-423913-n9
-```
-
 ### 以下必要になるファイルをバゲットからVMに送信
 
 ```bash
